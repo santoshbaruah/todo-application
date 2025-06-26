@@ -51,15 +51,18 @@ jobs:
           docker build -t frontend:local ./frontend/todo
 
       - name: Load local images into kind cluster
+        if: env.RUN_K8S_STEPS == 'true'
         run: |
           kind load docker-image backend:local --name todo-app
           kind load docker-image frontend:local --name todo-app
 
       - name: Apply Kubernetes manifests
+        if: env.RUN_K8S_STEPS == 'true'
         run: |
           kubectl apply -f k8s/backend-deployment.yaml
           kubectl apply -f k8s/frontend-deployment.yaml
 
       - name: Port forward frontend service
+        if: env.RUN_K8S_STEPS == 'true'
         run: |
           kubectl port-forward service/frontend-service 8080:80 
